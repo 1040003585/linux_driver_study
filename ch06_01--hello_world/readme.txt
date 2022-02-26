@@ -52,8 +52,7 @@ Feb 26 04:09:45 ubuntu kernel: [ 4982.434300] hello_world_exit sucess
 wu-being@ubuntu:~/code/linux_driver_study/ch06_01--hello_world$ cat /var/log/syslog |grep hello |tail -n 2
 Feb 26 04:08:44 ubuntu kernel: [ 4921.385027] hello_world_init sucess
 Feb 26 04:09:45 ubuntu kernel: [ 4982.434300] hello_world_exit sucess
-wu-being@ubuntu:~/code/linux_driver_study/ch06_01--hello_world$ echo ""readme.md
-readme.md
+wu-being@ubuntu:~/code/linux_driver_study/ch06_01--hello_world$ 
 wu-being@ubuntu:~/code/linux_driver_study/ch06_01--hello_world$ echo "" >readme.md
 wu-being@ubuntu:~/code/linux_driver_study/ch06_01--hello_world$ gedit readme.md 
 
