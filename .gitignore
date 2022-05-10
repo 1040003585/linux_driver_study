@@ -1,0 +1,15 @@
+# test
+*.log
+
+# ignore build temp file
+*.mod.c
+*.mod.o
+*.o
+*.symvers
+*.order
+
+# ignore linux gedit temp file *.~
+*~
+
+# ignore linux hide file
+.*
