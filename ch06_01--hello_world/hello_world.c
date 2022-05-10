@@ -1,9 +1,9 @@
 #include <linux/module.h>
-#include <linux/init.h>
-#include <linux/kernel.h>
-#include <linux/fs.h>
-#include <linux/miscdevice.h>
-#include <asm/uaccess.h>
+//#include <linux/init.h>
+//#include <linux/kernel.h>
+//#include <linux/fs.h>
+//#include <linux/miscdevice.h>
+//#include <asm/uaccess.h>
 
 static int hello_world_init(void)
 {
