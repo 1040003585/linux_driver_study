@@ -11,7 +11,7 @@ module_param(book_name, charp, S_IRUGO);
 static int book_num = 4000;
 module_param(book_num, int, S_IRUGO);
 
-static int module_param_init(void)
+static int __init module_param_init(void)
 {
 	printk("hello_world_init sucess\n");
 
@@ -20,7 +20,7 @@ static int module_param_init(void)
 	return 0;
 }
 
-static void module_param_exit(void)
+static void __exit module_param_exit(void)
 {
 	printk("module_param_exit sucess\n");
 }

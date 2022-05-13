@@ -5,7 +5,7 @@
 //#include <linux/miscdevice.h>
 //#include <asm/uaccess.h>
 
-static int try_module_get_init(void)
+static int __init try_module_get_init(void)
 {
 	bool result;
 
@@ -17,7 +17,7 @@ static int try_module_get_init(void)
 	return 0;
 }
 
-static void try_module_get_exit(void)
+static void __exit try_module_get_exit(void)
 {
 	printk("try_module_get_exit sucess\n");
 }

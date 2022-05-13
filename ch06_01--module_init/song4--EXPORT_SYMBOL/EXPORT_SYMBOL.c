@@ -22,14 +22,14 @@ int sub_integar(int a, int b)
 EXPORT_SYMBOL_GPL(sub_integar);
 
 
-static int EXPORT_SYMBOL_init(void)
+static int __init EXPORT_SYMBOL_init(void)
 {
 	printk("EXPORT_SYMBOL_init sucess\n");
 
 	return 0;
 }
 
-static void EXPORT_SYMBOL_exit(void)
+static void __exit EXPORT_SYMBOL_exit(void)
 {
 	printk("EXPORT_SYMBOL_exit sucess\n");
 }

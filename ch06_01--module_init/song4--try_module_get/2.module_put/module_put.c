@@ -5,7 +5,7 @@
 //#include <linux/miscdevice.h>
 //#include <asm/uaccess.h>
 
-static int module_put_init(void)
+static int __init module_put_init(void)
 {
 	bool result;
 
@@ -20,7 +20,7 @@ static int module_put_init(void)
 	return 0;
 }
 
-static void module_put_exit(void)
+static void __exit module_put_exit(void)
 {
 	printk("module_put_exit sucess\n");
 }

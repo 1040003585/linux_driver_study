@@ -17,7 +17,7 @@ struct miscdevice misc_client =
 
 EXPORT_SYMBOL(misc_client);
 
-static int try_module_get_client_init(void)
+static int __init try_module_get_client_init(void)
 {
 	int ret;
 
@@ -28,7 +28,7 @@ static int try_module_get_client_init(void)
 	return ret;
 }
 
-static void try_module_get_client_exit(void)
+static void __exit try_module_get_client_exit(void)
 {
 	misc_deregister(&misc_client);
 	printk(TAG "try_module_get_client_exit sucess\n");

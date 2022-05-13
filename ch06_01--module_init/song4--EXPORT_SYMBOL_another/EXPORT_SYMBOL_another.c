@@ -11,7 +11,7 @@ extern int sub_integar(int a, int b);
 extern char *book_name;
 
 
-static int EXPORT_SYMBOL_another_init(void)
+static int __init EXPORT_SYMBOL_another_init(void)
 {
 	printk("EXPORT_SYMBOL_another_init sucess\n");
 
@@ -22,7 +22,7 @@ static int EXPORT_SYMBOL_another_init(void)
 	return 0;
 }
 
-static void EXPORT_SYMBOL_another_exit(void)
+static void __exit EXPORT_SYMBOL_another_exit(void)
 {
 	printk("EXPORT_SYMBOL_another_exit sucess\n");
 }

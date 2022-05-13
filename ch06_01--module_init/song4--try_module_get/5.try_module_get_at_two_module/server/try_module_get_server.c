@@ -18,7 +18,7 @@ static struct miscdevice misc_server =
 extern struct miscdevice misc_client;
 
 
-static int try_module_get_server_init(void)
+static int __init try_module_get_server_init(void)
 {
 	int ret;
 	
@@ -35,7 +35,7 @@ static int try_module_get_server_init(void)
 	return ret;
 }
 
-static void try_module_get_server_exit(void)
+static void __exit try_module_get_server_exit(void)
 {
 	misc_deregister(&misc_server);
 	printk(TAG "try_module_get_server_exit sucess\n");
