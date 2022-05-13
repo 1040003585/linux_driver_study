@@ -83,5 +83,4 @@
 │   ├── word_count_userspace.c
 │   └── word_count_userspace.ko
 └── README.md
-
 ```
