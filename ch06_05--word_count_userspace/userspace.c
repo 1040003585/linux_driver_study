@@ -13,13 +13,13 @@ int main(int argc, char * argv[])
 	unsigned char buf[4];
 
 	testdev = open("/dev/word_count_userspace", O_RDWR);
-	if(testdev == -1)
+	if (testdev == -1)
 	{
 		printf(TAG "Can't open file.\n");
 		return 0;		
 	}
 
-	if(argc > 1)
+	if (argc > 1)
 	{
 		write(testdev, argv[1], strlen(argv[1]));
 		printf(TAG "Sting: %s\n", argv[1]);

@@ -14,8 +14,7 @@ static int written_count = 0;
 
 static ssize_t file_operations_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
 {
-	if(read_flag == 'n')
-	{
+	if (read_flag == 'n') {
 		copy_to_user(buf, (void*) mem, written_count);
 
 		printk(TAG " [%s] read written_count: %d\n", __func__, (int) written_count);
@@ -23,9 +22,7 @@ static ssize_t file_operations_read(struct file *file, char __user *buf, size_t 
 
 		read_flag = 'y';
 		return written_count;
-	}
-	else
-	{
+	} else {
 		printk(TAG " [%s] can not read data!!! count: %d\n", __func__, (int) count);
 		return 0;
 	}

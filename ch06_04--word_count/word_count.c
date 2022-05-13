@@ -17,7 +17,7 @@ static int word_count = 0;
 
 static char is_spacewhite(char c)
 {
-	if(c == ' ' || c == 9 || c == 13 || c == 10)
+	if (c == ' ' || c == 9 || c == 13 || c == 10)
 		return TRUE;
 	else
 		return FALSE;
@@ -31,22 +31,27 @@ static int get_word_count(const char *buf)
 
 	char flag = 0; // deal with multi space, 1 mean miss one space
 
-	if(*buf == '\0') return 0;	
-	if(is_spacewhite(*buf) == TRUE) n--;
+	if (*buf == '\0')
+		return 0;
 
-	for(; (c = *(buf + i)) != '\0'; i++)
-	{
-		if(flag == 1 && is_spacewhite(c) == FALSE) flag = 0;
-		else if(flag == 1 && is_spacewhite(c) == TRUE) continue;
+	if (is_spacewhite(*buf) == TRUE)
+		n--;
 
-		if(is_spacewhite(c) == TRUE)
-		{
+	for (; (c = *(buf + i)) != '\0'; i++) {
+		if (flag == 1 && is_spacewhite(c) == FALSE)
+			flag = 0;
+
+		else if(flag == 1 && is_spacewhite(c) == TRUE)
+			continue;
+
+		if (is_spacewhite(c) == TRUE) {
 			n++;
 			flag = 1;
 		}
 	}
 
-	if(is_spacewhite(*(buf + i -1)) ==  TRUE) n--;
+	if (is_spacewhite(*(buf + i -1)) == TRUE)
+		n--;
 
 	return n;
 }
