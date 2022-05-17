@@ -179,6 +179,18 @@ static struct miscdevice misc = {
 };
 */
 
+static void globalmem_setup_cdev(struct globalmem_dev *dev, int index)
+{
+	int err, devno = MKDEV(globalmem_major, index);
+
+	cdev_init(&dev->cdev, &globalmem_fops);			//init cdev
+	dev->cdev.owner = THIS_MODULE;
+	err = cdev_add(&dev->cdev, devno, 1);			//register cdev, bind devno
+
+	if (err)
+		printk(TAG "ERROR %d adding globalmem %d", err, index);
+}
+
 static int __init character_devices_init(void)
 {
 	int ret, i;
@@ -208,16 +220,7 @@ static int __init character_devices_init(void)
 	//mutex_init(&globalmem_devp->mutex);
 
 	for (i = 0; i < GLOBALMEM_NUM; i++) {
-	
-		cdev_init(&(globalmem_devp + i)->cdev, &globalmem_fops);			//init cdev
-		(globalmem_devp + i)->cdev.owner = THIS_MODULE;
-
-		ret = cdev_add(&(globalmem_devp + i)->cdev, devno, i);			//register cdev, bind devno
-	
-		if (ret < 0) {
-			printk(TAG "character_devices_init cdev_add fail: %d.\n", ret);
-			return ret;
-		}
+		globalmem_setup_cdev(globalmem_devp, i);
 	}
 
 	printk(TAG "character_devices_init sucess\n");
@@ -237,7 +240,7 @@ static void __exit character_devices_exit(void)
 	for (i = 0; i < GLOBALMEM_NUM; i++)
 		cdev_del(&(globalmem_devp + i)->cdev);				//unregister cdev
 
-	unregister_chrdev_region(MKDEV(globalmem_major, 0), 1);
+	unregister_chrdev_region(MKDEV(globalmem_major, 0), GLOBALMEM_NUM);
 
 	printk(TAG "character_devices_exit sucess\n");
 }
