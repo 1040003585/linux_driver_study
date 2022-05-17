@@ -525,4 +525,50 @@ wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-
 
 ```
 
+```
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ make -C /usr/src/linux-headers-3.13.0-32-generic/ M=/home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/
+make: Entering directory `/usr/src/linux-headers-3.13.0-32-generic'
+  CC [M]  /home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/Character-devices.o
+  Building modules, stage 2.
+  MODPOST 1 modules
+  CC      /home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/Character-devices.mod.o
+  LD [M]  /home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/Character-devices.ko
+make: Leaving directory `/usr/src/linux-headers-3.13.0-32-generic'
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo insmod Character-devices.ko 
+insmod: ERROR: could not insert module Character-devices.ko: File exists
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo rmmod Character_devices 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo insmod Character-devices.ko 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /proc/devices 
+250 globalmem_name2
+...
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu 250 0' > /dev/globaltest250_0"
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest250_0hello wu 250 0
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo dmesg -c|grep character_devices
+[14580.913718] [character_devices] character_devices_exit sucess
+[14584.494848] [character_devices] character_devices_init sucess
+[14604.301115] [character_devices] [globalmem_open] init flip private_data.
+[14604.301125] [character_devices] [globalmem_write] written count: 15, p:0.
+[14604.301126] [character_devices] [globalmem_write] written 15 bytes from 0.
+[14604.301128] [character_devices] [globalmem_release] release.
+[14610.441174] [character_devices] [globalmem_open] init flip private_data.
+[14610.441189] [character_devices] [globalmem_read] read count: 65536, p:0.
+[14610.441192] [character_devices] [globalmem_read] read 4096 bytes from 0.
+[14610.441209] [character_devices] [globalmem_read] read count: 65536, p:4096.
+[14610.441213] [character_devices] [globalmem_release] release.
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+
+```
+
+
 
