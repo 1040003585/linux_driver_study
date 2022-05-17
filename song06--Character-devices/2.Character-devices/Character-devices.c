@@ -9,9 +9,9 @@
 #define DEVICE_NAME "character_devices"
 #define TAG "[character_devices] "
 
-#define GLOBALMEM_SIZE 0x1000 //0x1000
+#define GLOBALMEM_SIZE 0x1000 	//0x1000
 #define MEM_CLEAR 0x1
-#define GLOBALMEM_MAJOR 231
+#define GLOBALMEM_MAJOR 0	//231
 
 static int globalmem_major = GLOBALMEM_MAJOR;
 module_param(globalmem_major, int, S_IRUGO);
@@ -33,7 +33,7 @@ static ssize_t globalmem_read(struct file *flip, char __user *buf, size_t size, 
 	int ret = 0;
 	struct globalmem_dev *dev = flip->private_data;
 
-	printk(TAG "[%s] read count: %d\n", __func__, (int) count);
+	printk(TAG "[%s] read count: %d, p:%lu.\n", __func__, (int) count, p);
 
 	if (p >= GLOBALMEM_SIZE)
 		return 0;
@@ -41,9 +41,10 @@ static ssize_t globalmem_read(struct file *flip, char __user *buf, size_t size, 
 	if (count > GLOBALMEM_SIZE - p)
 		count = GLOBALMEM_SIZE - p;
 
-	if (copy_to_user(buf, dev->mem + p, count))
+	if (copy_to_user(buf, dev->mem + p, count)) {
+		printk(TAG "[%s] -EFAULT:%d read %u bytes from %lu.\n", __func__, -EFAULT, count, p);
 		return -EFAULT;
-	else {
+	} else {
 		*ppos += count;
 		ret = count;
 
@@ -60,7 +61,7 @@ static ssize_t globalmem_write(struct file *flip, const char __user *buf, size_t
 	int ret = 0;
 	struct globalmem_dev *dev = flip->private_data;
 
-	printk(TAG "[%s] written count: %d\n", __func__, (int) count);
+	printk(TAG "[%s] written count: %d, p:%lu.\n", __func__, (int) count, p);
 
 	if (p >= GLOBALMEM_SIZE)
 		return 0;
@@ -68,9 +69,10 @@ static ssize_t globalmem_write(struct file *flip, const char __user *buf, size_t
 	if (count > GLOBALMEM_SIZE - p)
 		count = GLOBALMEM_SIZE - p;
 
-	if (copy_from_user(dev->mem + p, buf, count))
+	if (copy_from_user(dev->mem + p, buf, count)) {
+		printk(TAG "[%s] -EFAULT:%d written %u bytes from %lu.\n", __func__, -EFAULT, count, p);
 		return -EFAULT;
-	else {
+	} else {
 		*ppos += count;
 		ret = count;
 
@@ -80,8 +82,17 @@ static ssize_t globalmem_write(struct file *flip, const char __user *buf, size_t
 	return ret;
 }
 
+static ssize_t globalmem_open(struct inode *inode, struct file *flip)
+{
+	printk(TAG "[%s] init flip->private_data.\n", __func__);
+
+	flip->private_data = globalmem_devp;
+	return 0;
+}
+
 static struct file_operations globalmem_fops = {
 	.owner = THIS_MODULE,
+	.open = globalmem_open,
 	.read = globalmem_read,
 	.write = globalmem_write,
 /*	.llseek = globalmem_llseek,

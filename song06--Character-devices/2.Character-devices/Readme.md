@@ -220,3 +220,309 @@ wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/test-globalm
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/test-globalmem$ 
 
 ```
+
+issue:
+
+without open function
+```c
+
+static ssize_t globalmem_open(struct inode *inode, struct file *flip)
+{
+	printk(TAG "[%s] init flip->private_data.\n", __func__);
+
+	flip->private_data = globalmem_devp;
+	return 0;
+}
+static struct file_operations globalmem_fops = {
+	.open = globalmem_open,
+```
+log:
+
+```
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo mknod /dev/globaltest c 231 0
+[sudo] password for wu-being: 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep global
+crw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+
+
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu' > /dev/globaltest"
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest 
+cat: /dev/globaltest: Bad address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo dmesg -c|grep character_devices
+[ 9331.366499] [character_devices] [globalmem_write] written count: 9
+[ 9335.778665] [character_devices] [globalmem_read] read count: 65536
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo rmmod Character-devices.ko 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo dmesg -c|grep character_devices
+[ 9584.826784] [character_devices] character_devices_exit sucess
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep global
+crw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu' > /dev/globaltest"
+sh: 1: cannot create /dev/globaltest: No such device or address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest 
+cat: /dev/globaltest: No such device or address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+
+```
+with open function :
+
+```c
+
+static ssize_t globalmem_open(struct inode *inode, struct file *flip)
+{
+	printk(TAG "[%s] init flip->private_data.\n", __func__);
+
+	flip->private_data = globalmem_devp;
+	return 0;
+}
+static struct file_operations globalmem_fops = {
+	.open = globalmem_open,
+```
+
+log: 
+```
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ make -C /usr/src/linux-headers-3.13.0-32-generic/ M=/home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/
+make: Entering directory `/usr/src/linux-headers-3.13.0-32-generic'
+  CC [M]  /home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/Character-devices.o
+  Building modules, stage 2.
+  MODPOST 1 modules
+  CC      /home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/Character-devices.mod.o
+  LD [M]  /home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/Character-devices.ko
+make: Leaving directory `/usr/src/linux-headers-3.13.0-32-generic'
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+
+
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo insmod Character-devices.ko 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /proc/devices 
+Character devices:
+...
+250 globalmem_name2
+251 globalmem
+
+
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep globalcrw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ mknod /dev/globaltest250_0 c 250 0mknod: ‘/dev/globaltest250_0’: Permission denied
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo mknod /dev/globaltest250_0 c 250 0
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep globalcrw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+crw-r--r--  1 root root    250,   0 May 18 00:10 globaltest250_0
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu' > /dev/globaltest250_0"
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest250_0 
+hello wu
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo dmesg -c|grep character_devices[ 9782.048084] [character_devices] character_devices_init sucess
+[ 9849.468048] [character_devices] [globalmem_open] init flip->private_data.
+[ 9849.468057] [character_devices] [globalmem_write] written count: 9
+[ 9849.468058] [character_devices] [globalmem_write] written 9 bytes from 0.
+[ 9857.004249] [character_devices] [globalmem_open] init flip->private_data.
+[ 9857.004261] [character_devices] [globalmem_read] read count: 65536
+[ 9857.004264] [character_devices] [globalmem_read] read 4096 bytes from 0.
+[ 9857.004279] [character_devices] [globalmem_read] read count: 65536
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu ...' > /dev/globaltest250_0"
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest250_0 hello wu ...
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo dmesg -c|grep character_devices[10316.672037] [character_devices] [globalmem_open] init flip->private_data.
+[10316.672047] [character_devices] [globalmem_write] written count: 13
+[10316.672048] [character_devices] [globalmem_write] written 13 bytes from 0.
+[10320.526118] [character_devices] [globalmem_open] init flip->private_data.
+[10320.526132] [character_devices] [globalmem_read] read count: 65536
+[10320.526136] [character_devices] [globalmem_read] read 4096 bytes from 0.
+[10320.526153] [character_devices] [globalmem_read] read count: 65536
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+
+```
+
+```
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ make -C /usr/src/linux-headers-3.13.0-32-generic/ M=/home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/
+make: Entering directory `/usr/src/linux-headers-3.13.0-32-generic'
+  CC [M]  /home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/Character-devices.o
+  Building modules, stage 2.
+  MODPOST 1 modules
+  CC      /home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/Character-devices.mod.o
+  LD [M]  /home/wu-being/code/linux_driver_study/song06--Character-devices/2.Character-devices/Character-devices.ko
+make: Leaving directory `/usr/src/linux-headers-3.13.0-32-generic'
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo rmmod Character-devices.ko wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo insmod Character-devices.ko wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo dmesg -c|grep character_devices[10941.115635] [character_devices] character_devices_exit sucess
+[10952.243219] [character_devices] character_devices_init sucess
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep globalcrw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+crw-r--r--  1 root root    250,   0 May 18 00:10 globaltest250_0
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /proc/devices |grep global250 globalmem_name2
+251 globalmem
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu .' > /dev/globaltest250_0"
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest250_0 hello wu .
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo dmesg -c|grep character_devices[10991.229064] [character_devices] [globalmem_open] init flip->private_data.
+[10991.229073] [character_devices] [globalmem_write] written count: 11, p:0.
+[10991.229075] [character_devices] [globalmem_write] written 11 bytes from 0.
+[10998.877816] [character_devices] [globalmem_open] init flip->private_data.
+[10998.877828] [character_devices] [globalmem_read] read count: 65536, p:0.
+[10998.877831] [character_devices] [globalmem_read] read 4096 bytes from 0.
+[10998.877846] [character_devices] [globalmem_read] read count: 65536, p:4096.
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+
+```
+
+
+```
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo mknod /dev/globaltest250_1 c 250 1
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep global
+crw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+crw-r--r--  1 root root    250,   0 May 18 00:10 globaltest250_0
+crw-r--r--  1 root root    250,   1 May 18 00:44 globaltest250_1
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu 250 1' > /dev/globaltest250_1"
+sh: 1: cannot create /dev/globaltest250_1: No such device or address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu 250 1' > /dev/globaltest250_1"
+sh: 1: cannot create /dev/globaltest250_1: No such device or address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu 250 0' > /dev/globaltest250_0"
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest250_0 hello wu 250 0
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo dmesg -c|grep character_devices[11818.419446] [character_devices] [globalmem_open] init flip->private_data.
+[11818.419458] [character_devices] [globalmem_read] read count: 65536, p:0.
+[11818.419461] [character_devices] [globalmem_read] read 4096 bytes from 0.
+[11818.419475] [character_devices] [globalmem_read] read count: 65536, p:4096.
+[11950.388583] [character_devices] [globalmem_open] init flip->private_data.
+[11950.388592] [character_devices] [globalmem_write] written count: 15, p:0.
+[11950.388593] [character_devices] [globalmem_write] written 15 bytes from 0.
+[11993.383681] [character_devices] [globalmem_open] init flip->private_data.
+[11993.383693] [character_devices] [globalmem_read] read count: 65536, p:0.
+[11993.383696] [character_devices] [globalmem_read] read 4096 bytes from 0.
+[11993.383713] [character_devices] [globalmem_read] read count: 65536, p:4096.
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo mknod /dev/globaltest250_1 c 250 1
+mknod: ‘/dev/globaltest250_1’: File exists
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo mknod /dev/globaltest250-2 c 250 2
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo dmesg -c|grep character_deviceswu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep global
+crw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+crw-r--r--  1 root root    250,   0 May 18 00:10 globaltest250_0
+crw-r--r--  1 root root    250,   1 May 18 00:44 globaltest250_1
+crw-r--r--  1 root root    250,   2 May 18 00:47 globaltest250-2
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu 250 1' > /dev/globaltest250-2"
+sh: 1: cannot create /dev/globaltest250-2: No such device or address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+
+
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo mknod /dev/globaltest555_1 c 555 1
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep global
+crw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+crw-r--r--  1 root root    250,   0 May 18 00:10 globaltest250_0
+crw-r--r--  1 root root    250,   1 May 18 00:44 globaltest250_1
+crw-r--r--  1 root root    250,   2 May 18 00:47 globaltest250-2
+crw-r--r--  1 root root    555,   1 May 18 00:49 globaltest555_1
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu 555 1' > /dev/globaltest555_1"
+sh: 1: cannot create /dev/globaltest555_1: No such device or address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest555_1
+cat: /dev/globaltest555_1: No such device or address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$
+
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo rm -f /dev/globaltest250_0
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep globalcrw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+crw-r--r--  1 root root    250,   1 May 18 00:44 globaltest250_1
+crw-r--r--  1 root root    250,   2 May 18 00:47 globaltest250-2
+crw-r--r--  1 root root    555,   1 May 18 00:49 globaltest555_1
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo mknod /dev/globaltest250_0 c 250 0
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep globalcrw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+crw-r--r--  1 root root    250,   0 May 18 00:54 globaltest250_0
+crw-r--r--  1 root root    250,   1 May 18 00:44 globaltest250_1
+crw-r--r--  1 root root    250,   2 May 18 00:47 globaltest250-2
+crw-r--r--  1 root root    555,   1 May 18 00:49 globaltest555_1
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo mknod /dev/globaltest250_0-b b 250 0
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep globalcrw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+crw-r--r--  1 root root    250,   0 May 18 00:54 globaltest250_0
+brw-r--r--  1 root root    250,   0 May 18 00:54 globaltest250_0-b
+crw-r--r--  1 root root    250,   1 May 18 00:44 globaltest250_1
+crw-r--r--  1 root root    250,   2 May 18 00:47 globaltest250-2
+crw-r--r--  1 root root    555,   1 May 18 00:49 globaltest555_1
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu 250 0' > /dev/globaltest250_0"
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest250_0
+hello wu 250 0
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu 250 0' > /dev/globaltest250_0-b"
+sh: 1: cannot create /dev/globaltest250_0-b: No such device or address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest250_0-b cat: /dev/globaltest250_0-b: No such device or address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
+
+```
+
+
