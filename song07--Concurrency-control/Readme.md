@@ -2,7 +2,9 @@
 # 并发和竞态
 
 **并发**：多个执行单元同时、并行被执行。
+
 **共享资源**：硬件资源、软件的全局变量和静态变量。
+
 **竞态**：多个执行单元存在对共享资源的访问。
 
 竞态发生情况：
@@ -22,6 +24,7 @@ Linux2.6.35 取消嵌套中断
 # 编译乱序和执行乱序
 
 **编译乱序**：编译器行为，用barrier() 编译屏障处理；
+
 **执行乱序**：处理器运行时的行为；ARM 处理器屏障指令：DMB/DS/ISB，Linux 定义读写屏障mb()、读屏障rmb()、写屏障wmb()，寄存器的读写__iormb()、__iowmb()，API readl()/readl_relaxed(), writel()/writel_relaxed()。
 
 # 并发控制机制
@@ -34,7 +37,8 @@ Linux2.6.35 取消嵌套中断
 
 ## 中断屏蔽 
 
-中断屏蔽是对当前CPU屏蔽中断，适合单CPU，但长时间屏蔽中断比较危险
+中断屏蔽是对当前CPU屏蔽中断，适合单CPU，但长时间屏蔽中断比较危险。
+
 1. 中断和进程不再并发；
 2. 异步IO、进程调度依赖中断实现，抢占也能避免；
 
@@ -47,6 +51,7 @@ local_irq_ensable();    // 开中断
 ```
 
 `local_irq_save(flag)` 和`local_irq_restore(flag)` 处理屏蔽恢复中断，还可以保存恢复中断信息；
+
 `local_bh_disable()` 和`local_bh_enable()` 只禁止和恢复中断的底半部；
 
 ## 原子操作
@@ -116,7 +121,7 @@ int test_and_change_bit(nr, void *addr);
 
 ### 使用例子
 
-原子变量使设备只能被一个进程打开
+原子变量使设备只能被一个进程打开。
 
 ```c
 static atomic_t xxx_avaiable = ATOMIC_INIT(1); 
