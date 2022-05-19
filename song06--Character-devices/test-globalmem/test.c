@@ -178,11 +178,15 @@ static int __init globalmem_init(void){
         ret = -ENOMEM;
         goto fail_malloc;
     }
+    //mutex_init(&globalmem_devp->mutex); // bug: only for first devp
     mutex_init(&globalmem_devp->mutex);
     //register cdev
     for (i = 0; i < GLOBALMEM_NUM; ++i)
     {
-        globalmem_setup_cdev(globalmem_devp, i);
+        //globalmem_setup_cdev(globalmem_devp, i);/ bug: only for first devp
+        globalmem_setup_cdev(globalmem_devp+i, i);
+
+	mutex_init(&(globalmem_devp + i)->mutex);
     }
     return 0;
 fail_malloc:
