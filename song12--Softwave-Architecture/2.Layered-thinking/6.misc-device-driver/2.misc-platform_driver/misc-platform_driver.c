@@ -17,6 +17,8 @@ static struct miscdevice misc =
 { .minor = MISC_DYNAMIC_MINOR, .name = DEVICE_NAME, .fops = &dev_fops };
 
 struct globalfifo_dev {
+	// spinlock_t lock;
+	// ...
 	struct miscdevice miscdev;
 };
 
