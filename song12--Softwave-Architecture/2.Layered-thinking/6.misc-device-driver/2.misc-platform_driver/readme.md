@@ -42,6 +42,8 @@ wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layere
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ 
 
 
+```
+```
 
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ ls /sys/bus/platform/drivers/misc_platform_driver-name/
 bind  module  uevent  unbind
@@ -51,7 +53,6 @@ total 0
 lrwxrwxrwx 1 root root    0 May 20 16:47 module -> ../../../../module/misc_platform_driver
 --w------- 1 root root 4096 May 20 16:43 uevent
 --w------- 1 root root 4096 May 20 16:47 unbind
-
 
 
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ 
@@ -116,6 +117,9 @@ wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layere
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ 
 
 
+```
+```
+
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ ls /sys/bus/platform/drivers/misc_platform_device+driver-name/ -l
 total 0
 --w------- 1 root root 4096 May 20 17:04 bind
@@ -135,6 +139,9 @@ wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layere
 [56773.580216] [misc_platform_device] misc_platform_device_exit sucess
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ 
 
+
+```
+```
 
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ sudo insmod misc-platform_driver.ko 
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ 
@@ -167,6 +174,9 @@ lrwxrwxrwx 1 root root    0 May 20 17:08 module -> ../../../../module/misc_platf
 --w------- 1 root root 4096 May 20 17:08 unbind
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ 
 
+
+```
+```
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ ls /dev/ |grep misc
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ 
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/1.misc-platform_driver$ 

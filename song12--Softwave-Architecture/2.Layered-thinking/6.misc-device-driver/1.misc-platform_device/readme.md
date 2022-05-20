@@ -89,6 +89,9 @@ wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layere
 block/ char/  
 
 
+```
+```
+
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/2.misc-platform_device$ 
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/2.misc-platform_device$ 
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/2.misc-platform_device$ ls /sys/devices/platform/ -l
@@ -116,6 +119,9 @@ lrwxrwxrwx 1 root root    0 May 20 15:02 subsystem -> ../../../bus/platform
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/2.misc-platform_device$ 
 
 
+```
+```
+
 
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/2.misc-platform_device$ 
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/2.misc-platform_device$ ls /sys/bus/platform/
@@ -133,6 +139,9 @@ wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layere
 alarmtimer/                floppy.0/                  misc_platform_device-name/ reg-dummy/                 
 eisa.0/                    i8042/                     pcspkr/                    serial8250/                
 Fixed MDIO bus.0/          microcode/                 platform-framebuffer.0/    
+
+```
+```
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/2.misc-platform_device$ ls /sys/bus/platform/drivers -l
 total 0
 drwxr-xr-x 2 root root 0 May 20 14:50 88pm860x-regulator
@@ -172,6 +181,9 @@ drwxr-xr-x 2 root root 0 May 20 14:50 virtio-mmio
 drwxr-xr-x 2 root root 0 May 20 14:50 xgene-rtc
 drwxr-xr-x 2 root root 0 May 20 14:50 xhci-hcd
 
+
+```
+```
 wu-being@ubuntu:~/code/linux_driver_study/song12--Softwave-Architecture/2.Layered-thinking/6.misc-device-driver/2.misc-platform_device$ ls /sys/bus/platform/devices/ -l 
 total 0
 lrwxrwxrwx 1 root root 0 May 20 01:19 alarmtimer -> ../../../devices/platform/alarmtimer
