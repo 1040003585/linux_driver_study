@@ -7,8 +7,8 @@
 #include <linux/slab.h>				// kzalloc, kfree
 //#include <linux/mutex.h>
 
-#define DEVICE_NAME "character_devices"
-#define TAG "[character_devices] "
+#define DEVICE_NAME "character_devices_n"
+#define TAG "[character_devices_n] "
 
 #define GLOBALMEM_SIZE 0x1000 	//0x1000
 #define GLOBALMEM_MAJOR 0	//231
@@ -191,28 +191,28 @@ static void globalmem_setup_cdev(struct globalmem_dev *dev, int index)
 		printk(TAG "ERROR %d adding globalmem %d", err, index);
 }
 
-static int __init character_devices_init(void)
+static int __init character_devices_n_init(void)
 {
 	int ret, i;
 	dev_t devno = MKDEV(globalmem_major, 0);
 
 
 	if (globalmem_major)							//init devno
-		ret = register_chrdev_region(devno, GLOBALMEM_NUM, "globalmem_name1_n");
+		ret = register_chrdev_region(devno, GLOBALMEM_NUM, "character_devices_n-globalmem_name1_n");
 	else {
-		ret = alloc_chrdev_region(&devno, 0, GLOBALMEM_NUM, "globalmem_name2_n");
+		ret = alloc_chrdev_region(&devno, 0, GLOBALMEM_NUM, "character_devices_n-globalmem_name2_n");
 		globalmem_major = MAJOR(devno);
 	}
 	
 	if (ret < 0) {
-		printk(TAG "character_devices_init *chrdev_region fail: %d.\n", ret);
+		printk(TAG "character_devices_n_init *chrdev_region fail: %d.\n", ret);
 		return ret;
 	}
 
 	globalmem_devp = kzalloc(sizeof(struct globalmem_dev) * GLOBALMEM_NUM, GFP_KERNEL);
 	if (!globalmem_devp) {
 		ret = -ENOMEM;
-		printk(TAG "character_devices_init kzalloc fail: %d.\n", ret);
+		printk(TAG "character_devices_n_init kzalloc fail: %d.\n", ret);
 
 		goto fail_malloc;
 	}
@@ -220,10 +220,11 @@ static int __init character_devices_init(void)
 	//mutex_init(&globalmem_devp->mutex);
 
 	for (i = 0; i < GLOBALMEM_NUM; i++) {
-		globalmem_setup_cdev(globalmem_devp, i);
+		//globalmem_setup_cdev(globalmem_devp, i);
+		globalmem_setup_cdev(globalmem_devp + i, i);
 	}
 
-	printk(TAG "character_devices_init sucess\n");
+	printk(TAG "character_devices_n_init sucess\n");
 	return 0;
 
 
@@ -232,7 +233,7 @@ fail_malloc:
 	return ret;
 }
 
-static void __exit character_devices_exit(void)
+static void __exit character_devices_n_exit(void)
 {
 	int i;
 	kfree(globalmem_devp);
@@ -242,11 +243,11 @@ static void __exit character_devices_exit(void)
 
 	unregister_chrdev_region(MKDEV(globalmem_major, 0), GLOBALMEM_NUM);
 
-	printk(TAG "character_devices_exit sucess\n");
+	printk(TAG "character_devices_n_exit sucess\n");
 }
 
-module_init(character_devices_init);
-module_exit(character_devices_exit);
+module_init(character_devices_n_init);
+module_exit(character_devices_n_exit);
 
 MODULE_AUTHOR("Chengbing.Wu");
 MODULE_LICENSE("GPL");
