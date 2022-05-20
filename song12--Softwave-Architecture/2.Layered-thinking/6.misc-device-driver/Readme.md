@@ -33,8 +33,8 @@ Character devices:
 
 ```
 
-本章节两个例子中，分别insmod 各自ko文件（无先后顺序），分别会注册platfrom device 和platform driver.
-如果platfrom device的name 和platform driver的driver.name 通过platfrom_match 匹配一致，则会运行driver 的probe 函数，根据代码创建/dev/xxx misc设备。
+本章节两个例子中，分别insmod 各自ko文件（无先后顺序），分别会注册platfrom device 和platform driver。
+如果platfrom device的name 和platform driver的driver.name 通过platfrom_match 匹配一致，则会运行driver 的probe 函数，根据实现的probe代码创建/dev/xxx 相关misc设备。
 
 
 **如下用各自的名字是无法匹配**
