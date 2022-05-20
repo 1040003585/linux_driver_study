@@ -6,7 +6,7 @@
 //#include <asm/uaccess.h>
 #include <linux/platform_device.h>
 
-#define DEVICE_NAME "misc_platform_driver_NAME"
+#define DEVICE_NAME "misc_platform_driver_miscdeviceNAME"
 #define TAG "[misc_platform_driver] "
 
 
