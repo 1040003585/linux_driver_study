@@ -18,5 +18,10 @@ Linux 设备驱动非常重视软件的可用性和跨平台能力。
 主机控制器驱动不关心外设，外设驱动也不关心主机，只是通过核心层的通用API进行数据传输。如果有m个主机控制器、n个外设，分离的结果就是m+n 个驱动，不分离就是m*n个驱动。
 ![Linux 设备驱动的主机、外设驱动分离](https://img-blog.csdnimg.cn/c5640a3b0dbe4044a6629aa6a00d0441.png  =700x)
 
+
 **附PPT**： https://www.renrendoc.com/paper/175198950.html
+
 **相关代码**：[Softwave-Architecture](https://github.com/1040003585/linux_driver_study/tree/main/song12--Softwave-Architecture)
+
+
+**我的博客原文**：[Linux 驱动的软件架构](https://blog.csdn.net/u014134180/article/details/124899401)
