@@ -488,14 +488,16 @@ wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-
 
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo rm -f /dev/globaltest250_0
-wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep globalcrw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep global
+crw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
 crw-r--r--  1 root root    250,   1 May 18 00:44 globaltest250_1
 crw-r--r--  1 root root    250,   2 May 18 00:47 globaltest250-2
 crw-r--r--  1 root root    555,   1 May 18 00:49 globaltest555_1
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo mknod /dev/globaltest250_0 c 250 0
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
-wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep globalcrw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep global
+crw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
 crw-r--r--  1 root root    250,   0 May 18 00:54 globaltest250_0
 crw-r--r--  1 root root    250,   1 May 18 00:44 globaltest250_1
 crw-r--r--  1 root root    250,   2 May 18 00:47 globaltest250-2
@@ -503,7 +505,8 @@ crw-r--r--  1 root root    555,   1 May 18 00:49 globaltest555_1
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo mknod /dev/globaltest250_0-b b 250 0
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
-wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep globalcrw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ ls /dev -l |grep global
+crw-r--r--  1 root root    231,   0 May 17 23:59 globaltest
 crw-r--r--  1 root root    250,   0 May 18 00:54 globaltest250_0
 brw-r--r--  1 root root    250,   0 May 18 00:54 globaltest250_0-b
 crw-r--r--  1 root root    250,   1 May 18 00:44 globaltest250_1
@@ -520,7 +523,8 @@ wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ sudo sh -c "echo 'hello wu 250 0' > /dev/globaltest250_0-b"
 sh: 1: cannot create /dev/globaltest250_0-b: No such device or address
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
-wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest250_0-b cat: /dev/globaltest250_0-b: No such device or address
+wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ cat /dev/globaltest250_0-b 
+cat: /dev/globaltest250_0-b: No such device or address
 wu-being@ubuntu:~/code/linux_driver_study/song06--Character-devices/2.Character-devices$ 
 
 ```
