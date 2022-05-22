@@ -6,9 +6,8 @@
 显然，在这些工作中，只是中断、读键值／坐标值是与设备相关的，而输入事件的缓冲区管理以及字符设备驱动的 file operations 接口则对输入设备是通用的。
 基于此，内核设计了输入子系统，由核心层处理公共的工作。
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/fc7a87497e8146ffb069586f95523f5f.png#pic_center)
+![输入设备驱动子系统](https://img-blog.csdnimg.cn/fc7a87497e8146ffb069586f95523f5f.png =500x)
 
-**相关code 参考**：[https://wu-being.blog.csdn.net/article/details/78394721](https://wu-being.blog.csdn.net/article/details/78394721)
+**相关code 文章**：[Github](https://github.com/1040003585/linux_driver_study/tree/main/song12--Softwave-Architecture/2.Layered-thinking/2.input-device-driver)，[https://wu-being.blog.csdn.net/article/details/78394721](https://wu-being.blog.csdn.net/article/details/78394721)
 
 **我的博客原文**：[输入设备驱动](https://blog.csdn.net/u014134180/article/details/124914859)
-
