@@ -321,7 +321,7 @@ wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$
 wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ sudo dmesg -c|grep character_devices
 [11214.256811] [character_devices_wq] [globalfifo_read] schedule after.
 [11214.256813] [character_devices_wq] [globalfifo_read] signal_pending before.
-[11214.256820] [character_devices_wq] [globalfifo_read] signal_pending.
+[11214.256820] [character_devices_wq] [globalfifo_read] signal_pending.            // get kill signal...
 [11214.256879] [character_devices_wq] [globalfifo_release] release.
 wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
 wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
@@ -360,3 +360,63 @@ wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$
 
 ```
 
+signal_pending ctrl+c signal:
+```
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ make
+make -C /usr/src/linux-headers-3.13.0-32-generic         M=/home/wu-being/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue              modules
+make[1]: Entering directory `/usr/src/linux-headers-3.13.0-32-generic'
+  CC [M]  /home/wu-being/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue/Character-devices_wq.o
+  Building modules, stage 2.
+  MODPOST 1 modules
+  CC      /home/wu-being/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue/Character-devices_wq.mod.o
+  LD [M]  /home/wu-being/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue/Character-devices_wq.ko
+make[1]: Leaving directory `/usr/src/linux-headers-3.13.0-32-generic'
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ ls -ltr
+total 92
+-rw-rw-r-- 1 wu-being wu-being   510 May 24 22:54 Makefile
+-rw-rw-r-- 1 wu-being wu-being  2573 May 25 01:38 2.userspace_nonblock.c
+-rw-rw-r-- 1 wu-being wu-being  3041 May 25 01:40 3.userspace_nonblock2.c
+-rw-rw-r-- 1 wu-being wu-being  1203 May 25 01:48 4.userspace_block2.c
+-rw-rw-r-- 1 wu-being wu-being  2807 May 25 01:51 1.userspace_block.c
+-rw-rw-r-- 1 wu-being wu-being 22881 May 25 01:58 Readme.md
+-rw-rw-r-- 1 wu-being wu-being 10687 May 25 15:14 Character-devices_wq.c
+-rw-rw-r-- 1 wu-being wu-being  8668 May 26 15:02 Character-devices_wq.o
+-rw-rw-r-- 1 wu-being wu-being   106 May 26 15:02 modules.order
+-rw-rw-r-- 1 wu-being wu-being     0 May 26 15:02 Module.symvers
+-rw-rw-r-- 1 wu-being wu-being  2016 May 26 15:02 Character-devices_wq.mod.c
+-rw-rw-r-- 1 wu-being wu-being  3320 May 26 15:02 Character-devices_wq.mod.o
+-rw-rw-r-- 1 wu-being wu-being 10393 May 26 15:02 Character-devices_wq.ko
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ sudo insmod Character-devices_wq.ko 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ cat /proc/devices |grep char
+250 character_devices_wq-globalfifo_name2_n
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ sudo mknod c 250 0
+mknod: missing operand after ‘0’
+Try 'mknod --help' for more information.
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ sudo mknod /dev/globalfifo c 250 0
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ ls /dev/globalfifo  -l
+crw-r--r-- 1 root root 250, 0 May 26 15:03 /dev/globalfifo
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ sudo dmesg -c |grep char
+[  144.614915] [character_devices_wq] character_devices_wq_init sucess
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ cat /dev/globalfifo 
+^C
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ sudo dmesg -c |grep char
+[  241.613619] [character_devices_wq] [globalfifo_open] container_of private_data.
+[  241.613629] [character_devices_wq] [globalfifo_read] count: 65536. start.
+[  241.613630] [character_devices_wq] [globalfifo_read] schedule before.
+[  243.162624] [character_devices_wq] [globalfifo_read] schedule after.
+[  243.162627] [character_devices_wq] [globalfifo_read] signal_pending before.
+[  243.162628] [character_devices_wq] [globalfifo_read] signal_pending.
+[  243.162686] [character_devices_wq] [globalfifo_release] release.
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/1.Wait-Queue$ 
+
+```
