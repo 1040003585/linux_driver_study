@@ -294,7 +294,7 @@ synchronize_rcu() 不会等待后续(Subsequent)的读临界区的完成.
 3. 挂接回调
 ...
 ```
-
+RCU 目前有用于GPU 相关code中。
 
 ## 信号量
 
