@@ -570,3 +570,5 @@ wu-being@ubuntu:~/code/linux_driver_study/song08--Block_NONBLOCK/2.Poll$
 
 
 **使用等待队列完整例子代码**：[2.Poll](https://github.com/1040003585/linux_driver_study/tree/main/song08--Block_NONBLOCK/2.Poll)
+
+附：位于 https://www.kernel.org/doc/ols/2004/ols2004v1-pages-215-226.pdf 的文档《 comparing and Evaluating epoll , select , and poll Event Mechanisms 》对比了 select 、 epoll 、 pol 之间的一些性能.
