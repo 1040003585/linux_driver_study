@@ -1,3 +1,4 @@
+/* move to "work.h"
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/init.h>
@@ -5,18 +6,9 @@
 
 //#include <linux/slab.h> //kzalloc
 //#include <linux/platform_device.h>
+*/
 
-#define TAG "[work] "
-
-struct delayed_work usbwork;
-
-void work_usb(struct work_struct *work)
-{
-    printk(TAG "%s.\n", __func__);
-
-    // reschedule for the next time 
-    schedule_delayed_work(&usbwork, msecs_to_jiffies(1* 1000));
-}
+#include "work.h"
 
 /*
 struct work_charger {
@@ -151,7 +143,4 @@ static void work_exit(void)
 
 subsys_initcall(work_init);
 module_exit(work_exit);
-
-MODULE_AUTHOR("Chengbing.Wu");
-MODULE_LICENSE("GPL v2");
 

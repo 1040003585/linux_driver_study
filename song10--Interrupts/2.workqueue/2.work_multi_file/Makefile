@@ -1,4 +1,5 @@
-obj-m := work.o
+obj-m := work_task.o
+work_task-objs := work.o task.o
 
 CURRENT_PATH := $(shell pwd)             #current path	
 LINUX_KERNEL := $(shell uname -r)        #kernel version
