@@ -320,3 +320,154 @@ static irqreturn_t irq_default_primary_handler ( int irq , void * dev_id )
  return IRQ_WAKE_ТHREAD ;
 }
 ```
+
+# 中断共享
+
+多个设备共享一根中断线的情况在实际的硬件中广泛存在，PCI设备即是如此。中断共享的使用方法如下：  
+
+1. 共享中断的多个设备在申请中断的时候都应该使用SA_SHIRQ标志，而且一个设备以SA_SHIRQ申请中断成功的前提是之前申请该中断的所有设备都以SA_SHIRQ标志申请该中断。  
+2. 尽管内核模块可访问的全局地址都可以作为`request_irq(...,void *dev_id)` 的最后一个参数dev_id，但是设备结构体指针是可传入的最佳参数。  
+3. 中断到来时所有共享中断的中断处理程序都被执行，在中断处理程序的顶半部中，应迅速地根据硬件寄存器中的信息比照传入的dev_id参数做出判断是否是本设备的中断，若不是应该迅速返回。 
+
+```c
+
+/* *****************************************************************************  
+ 
+  共享中断编程模板如下：  
+   
+***************************************************************************** */ 
+
+/*中断处理顶半部*/ 
+irqreturn_t xxx_interrupt(int irq,void *dev_id,struct pt_regs *regs)  
+{  
+ ...  
+ int status = read_int_status();//获知中断源  
+ if(!is_myint(dev_id,status))/*判断是否是本设备的中断*/ 
+ {  
+  return IRQ_NONE;//立即返回  
+ }  
+ ...  
+ return IRQ_HANDLED;  
+}  
+
+/*设备驱动加载模块*/ 
+int xxx_init(void)  
+{  
+ ...  
+ //申请共享中断  
+ result = request_irq(sh_irq,xxx_interrupt,SA_SHIRQ,"xxx",xxx_dev);  
+ ...  
+}  
+
+/*设备驱动卸载模块*/ 
+int xxx_exit(void)  
+{  
+ ...  
+ //释放中断  
+ free_irq(sh_irq,xxx_dev);  
+ ...  
+}  
+```
+
+# 例子：GPIO 按键的中断
+
+drivers/input/keyboard/gpio_keys.c
+
+```c
+static int gpio_keys_setup_key(struct platform_device *pdev,
+				struct input_dev *input,
+				struct gpio_keys_drvdata *ddata,
+				const struct gpio_keys_button *button,
+				int idx,
+				struct fwnode_handle *child)
+{
+...
+		INIT_WORK(&bdata->work, gpio_keys_gpio_work_func);
+		setup_timer(&bdata->timer,
+			    gpio_keys_gpio_timer, (unsigned long)bdata);
+
+		isr = gpio_keys_gpio_isr;
+
+	/*
+	 * If platform has specified that the button can be disabled,
+	 * we don't want it to share the interrupt line.
+	 */
+	if (!button->can_disable)
+		irqflags |= IRQF_SHARED;
+
+	error = devm_request_any_context_irq(dev, bdata->irq, isr, irqflags,
+					     desc, bdata);
+	if (error < 0) {
+		dev_err(dev, "Unable to claim irq %d; error %d\n",
+			bdata->irq, error);
+		return error;
+	}
+
+	return 0;
+}
+
+static void gpio_remove_key(struct gpio_button_data *bdata)
+{
+	free_irq(bdata->irq, bdata);
+	if (bdata->timer_debounce)
+		del_timer_sync(&bdata->timer);
+	cancel_work_sync(&bdata->work);
+	if (gpio_is_valid(bdata->button->gpio))
+		gpio_free(bdata->button->gpio);
+}
+
+
+static irqreturn_t gpio_keys_gpio_isr(int irq, void *dev_id)
+{
+	struct gpio_button_data *bdata = dev_id;
+
+	BUG_ON(irq != bdata->irq);
+	// 唤醒锁相关，按的时候，拿锁不允许休眠
+	if (bdata->button->wakeup)
+		pm_stay_awake(bdata->input->dev.parent);
+	if (bdata->timer_debounce)
+		mod_timer(&bdata->timer,
+			jiffies + msecs_to_jiffies(bdata->timer_debounce));
+	else
+		schedule_work(&bdata->work);
+
+	return IRQ_HANDLED;
+}
+
+static void gpio_keys_gpio_work_func(struct work_struct *work)
+{
+	struct gpio_button_data *bdata =
+		container_of(work, struct gpio_button_data, work);
+	// 上报数据
+	gpio_keys_gpio_report_event(bdata);
+	// 唤醒锁相关，上报后放锁才允许休眠
+	if (bdata->button->wakeup)
+		pm_relax(bdata->input->dev.parent);
+}
+
+static struct gpio_keys_platform_data *
+gpio_keys_get_devtree_pdata(struct device *dev)
+{
+		button->wakeup = !!of_get_property(pp, "gpio-key,wakeup", NULL);
+
+		if (of_property_read_u32(pp, "debounce-interval",
+					 &button->debounce_interval))
+			button->debounce_interval = 5;  // 上报debounce 时间默认5ms
+
+static int gpio_keys_probe(struct platform_device *pdev)
+{
+
+		error = gpio_keys_setup_key(pdev, input, bdata, button);
+		if (error)
+			goto fail2;
+
+		if (button->wakeup)
+			wakeup = 1;
+	}
+	// 唤醒锁相关
+	device_init_wakeup(&pdev->dev, wakeup); //
+
+	return 0;
+```
+
+ps. mod_timer、schedule_work 参考：https://github.com/1040003585/linux_driver_study/tree/main/song10--Timer_Delay/
