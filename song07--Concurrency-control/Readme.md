@@ -368,3 +368,6 @@ void wait_for_completion(struct completion *c);
 void complete(struct completion *c);    // 只唤醒一个
 void complete_all(struct completion *c);// 唤醒所有
 ```
+
+Completion 实际由**等待队列（Wait Queue）** （`wake_up()`与`wait_event()`）来实现。
+参考，song07 章节目录。
