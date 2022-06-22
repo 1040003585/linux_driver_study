@@ -38,7 +38,7 @@
 │  └─1.signal
 ├─song10--Interrupts
 │  ├─1.tasklet
-│  ├─2.workqueue
+│  ├─2.delayed_work
 │  │  ├─1.work
 │  │  └─2.work_multi_file
 │  └─3.xxx_charger_work
